@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html>
+	<!-- Stanley Yang    9/25/2012
+		 Introduction to Programming
+		 Project 2 - game v0.2 -->
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<meta name="author"             content="Stanley Yang" />
+		<title>Death Island</title>
+		<style>
+			body {background-color:black; color:white}
+		</style>
+	</head>
+	
+	<body onLoad="generateMap(3); fillStory();">
+		<h1 class="game_title">
+			Death Island
+		</h1>
+		
+		<!-- damn firefox caching inputs, autocomplete will error in the validator but it is the only way to stop firefox from drawing from its cache-->
+		
+		<textarea rows= "10" cols="80" id="display" autocomplete = "off" readonly >You are on a floating island, hundreds of thousands of feet in the air, surrounded by various things.
+		</textarea>
+		<p id = "displayScore">
+		Current Score : 0
+		</p>
+		<p class = "email">
+			<a href="mailto:stanley.yang1@marist.edu"> Questions? </a>
+		</p>
+		<p class="validator">
+			<a href="http://validator.w3.org/#validate_by_input">HTML5</a>
+		</p>
+		
+		<!-- I chose not to use alert boxes beacuse it would be a waste of time to recode it later -->
+		
+		<input type="button"
+			   value="North"
+			   onclick="move(1);">
+			   
+		<input type="button"
+			   value="East"
+			   onclick="move(2);">
+			   
+		<input type="button"
+			   value="South"
+			   onclick="move(3);">
+		
+		<input type="button"
+			   value="West"
+			   onclick= "move(4);" >
+			   
+		<script type = "text/javascript">
+		var positionMap;
+		var storyMap;
+		var score = 0;
+		var posx;
+		var posy;
+		var mapSize;
+		var alive = 1;
+		
+		//generates the map and places you at the certain of it at the moment
+		function generateMap(size){
+		var i = 0;
+		positionMap = new Array(size);
+		storyMap = new Array(size);
+		for( ;i < size; i++){
+				positionMap[i] = new Array(size);
+				storyMap[i] = new Array(size);
+				}
+		for(i=0; i < size;i++){
+			for(j=0; j <size;j++){
+				positionMap[i][j] = 0;
+				}
+			}
+		posx = Math.floor(size / 2);
+		posy = posx;
+		mapSize = size;
+		positionMap[posx][posy] = 1;
+		}
+		
+		//temporary hard code since I didn't want to make another matrix for details for looking around yet
+		function fillStory(){
+		storyMap[0][0] = "You fell into a trap. You fall into a pit of spikes and are instantly impaled.";
+		storyMap[0][1] = "You peer into the deep blue sky, \n you are facing North. \n To your left is a dirt road. To your right is a bonfire";
+		storyMap[0][2] = "You trip and fall into the bonfire. You are roasted alive" ;
+		storyMap[1][0] = "You peer over the edge and stare at a cloud. \n You are facing West. \n To your left is a road covered with leaves. To your right is a dirt road." ;
+		storyMap[1][1] = "You are back where you started, you are facing North again." ;
+		storyMap[1][2] = "You kick a pebble to see how high up you are. The stone fades out of sight. \n You are facing East. \n To your left is a bonfire. To your right is a group of natives." ;
+		storyMap[2][0] = "You step on a spring pad and you are launched off the island. You made an amusing splat sound." ;
+		storyMap[2][1] = "You notice a cloud that is shaped like a skull. Hopefully not a bad omen. \n You are facing South. \n To your left are a group of natives. To your right is a road covered in leaves." ;
+		storyMap[2][2] = "You greet the people. They turn out to be cannibals. They knock you over the head and serve you for dinner. You were delicately seasoned. " ;
+		}
+		
+		function updateText(message){
+		display.value = message + "\n \n" + display.value;
+		}
+		
+		function updateScore(x){
+		score += x;
+		document.getElementById("displayScore").innerHTML = "Current Score: " + score;
+		}
+		
+		function move(x){
+		if (alive != 1) { updateText("You are dead, please refresh the page"); return;} //checks if player is still alive
+		if (x === 1) { updateText("> You head North"); posy--;}
+		if (x === 2) { updateText("> You head East"); posx++;}
+		if (x === 3) { updateText("> You head South"); posy++;}
+		if (x === 4) { updateText("> You head West"); posx--;}
+		if (posx < 0 || posx == mapSize || posy < 0 || posy == mapSize) { //checks if player walked off the map
+			alive = 0;
+			updateText("You walk off the island and fall to your death. You went splat.");
+			return;
+			}
+		
+		updateText(storyMap[posy][posx]);
+		
+		//checks if the players are on the death corners
+		if ((posx == 0 && posy == (mapSize - 1)) || (posx == 0 && posy == 0) || (posx == (mapSize - 1) && posy == (mapSize - 1)) || (posx == (mapSize - 1) && posy == 0) ){
+			alive = 0;
+			}
+		
+		
+		if (positionMap[posy][posx] == 0) { //gives player some points for entering a new area
+			positionMap[posy][posx] = 1;
+			updateScore(5);
+			}
+		}
+		
+		</script>
+
+	</body>
+</html>
+
+<!-- mainly used wc3schools.com for reference and stack overflow for fixing the firefox problem -->

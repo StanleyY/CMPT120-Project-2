@@ -19,7 +19,7 @@
 		
 		<!-- damn firefox caching inputs, autocomplete will error in the validator but it is the only way to stop firefox from drawing from its cache-->
 		
-		<textarea rows= "10" cols="80" id="display" autocomplete = "off" readonly >You are on a floating island, hundreds of thousands of feet in the air, surrounded by various things.
+		<textarea rows= "10" cols="80" id="display" readonly >You are on a floating island, hundreds of thousands of feet in the air, surrounded by various things.
 		</textarea>
 		<p id = "displayScore">
 		Current Score : 0
@@ -60,70 +60,70 @@
 		
 		//generates the map and places you at the certain of it at the moment
 		function generateMap(size){
-		var i = 0;
-		positionMap = new Array(size);
-		storyMap = new Array(size);
-		for( ;i < size; i++){
-				positionMap[i] = new Array(size);
-				storyMap[i] = new Array(size);
+			var i = 0;
+			positionMap = new Array(size);
+			storyMap = new Array(size);
+			for( ;i < size; i++){
+					positionMap[i] = new Array(size);
+					storyMap[i] = new Array(size);
+					}
+			for(i=0; i < size;i++){
+				for(j=0; j <size;j++){
+					positionMap[i][j] = 0;
+					}
 				}
-		for(i=0; i < size;i++){
-			for(j=0; j <size;j++){
-				positionMap[i][j] = 0;
-				}
-			}
-		posx = Math.floor(size / 2);
-		posy = posx;
-		mapSize = size;
-		positionMap[posx][posy] = 1;
+			posx = Math.floor(size / 2);
+			posy = posx;
+			mapSize = size;
+			positionMap[posx][posy] = 1;
 		}
 		
 		//temporary hard code since I didn't want to make another matrix for details for looking around yet
 		function fillStory(){
-		storyMap[0][0] = "You fell into a trap. You fall into a pit of spikes and are instantly impaled.";
-		storyMap[0][1] = "You peer into the deep blue sky, \n you are facing North. \n To your left is a dirt road. To your right is a bonfire";
-		storyMap[0][2] = "You trip and fall into the bonfire. You are roasted alive" ;
-		storyMap[1][0] = "You peer over the edge and stare at a cloud. \n You are facing West. \n To your left is a road covered with leaves. To your right is a dirt road." ;
-		storyMap[1][1] = "You are back where you started, you are facing North again." ;
-		storyMap[1][2] = "You kick a pebble to see how high up you are. The stone fades out of sight. \n You are facing East. \n To your left is a bonfire. To your right is a group of natives." ;
-		storyMap[2][0] = "You step on a spring pad and you are launched off the island. You made an amusing splat sound." ;
-		storyMap[2][1] = "You notice a cloud that is shaped like a skull. Hopefully not a bad omen. \n You are facing South. \n To your left are a group of natives. To your right is a road covered in leaves." ;
-		storyMap[2][2] = "You greet the people. They turn out to be cannibals. They knock you over the head and serve you for dinner. You were delicately seasoned. " ;
+			storyMap[0][0] = "You fell into a trap. You fall into a pit of spikes and are instantly impaled.";
+			storyMap[0][1] = "You peer into the deep blue sky, \n you are facing North. \n To your left is a dirt road. To your right is a bonfire";
+			storyMap[0][2] = "You trip and fall into the bonfire. You are roasted alive" ;
+			storyMap[1][0] = "You peer over the edge and stare at a cloud. \n You are facing West. \n To your left is a road covered with leaves. To your right is a dirt road." ;
+			storyMap[1][1] = "You are back where you started, you are facing North again." ;
+			storyMap[1][2] = "You kick a pebble to see how high up you are. The stone fades out of sight. \n You are facing East. \n To your left is a bonfire. To your right is a group of natives." ;
+			storyMap[2][0] = "You step on a spring pad and you are launched off the island. You made an amusing splat sound." ;
+			storyMap[2][1] = "You notice a cloud that is shaped like a skull. Hopefully not a bad omen. \n You are facing South. \n To your left are a group of natives. To your right is a road covered in leaves." ;
+			storyMap[2][2] = "You greet the people. They turn out to be cannibals. They knock you over the head and serve you for dinner. You were delicately seasoned. " ;
 		}
 		
 		function updateText(message){
-		display.value = message + "\n \n" + display.value;
+			display.value = message + "\n \n" + display.value;
 		}
 		
 		function updateScore(x){
-		score += x;
-		document.getElementById("displayScore").innerHTML = "Current Score: " + score;
+			score += x;
+			document.getElementById("displayScore").innerHTML = "Current Score: " + score;
 		}
 		
 		function move(x){
-		if (alive != 1) { updateText("You are dead, please refresh the page"); return;} //checks if player is still alive
-		if (x === 1) { updateText("> You head North"); posy--;}
-		if (x === 2) { updateText("> You head East"); posx++;}
-		if (x === 3) { updateText("> You head South"); posy++;}
-		if (x === 4) { updateText("> You head West"); posx--;}
-		if (posx < 0 || posx == mapSize || posy < 0 || posy == mapSize) { //checks if player walked off the map
-			alive = 0;
-			updateText("You walk off the island and fall to your death. You went splat.");
-			return;
-			}
-		
-		updateText(storyMap[posy][posx]);
-		
-		//checks if the players are on the death corners
-		if ((posx == 0 && posy == (mapSize - 1)) || (posx == 0 && posy == 0) || (posx == (mapSize - 1) && posy == (mapSize - 1)) || (posx == (mapSize - 1) && posy == 0) ){
-			alive = 0;
-			}
-		
-		
-		if (positionMap[posy][posx] == 0) { //gives player some points for entering a new area
-			positionMap[posy][posx] = 1;
-			updateScore(5);
-			}
+			if (alive != 1) { updateText("You are dead, please refresh the page"); return;} //checks if player is still alive
+			if (x === 1) { updateText("> You head North"); posy--;}
+			if (x === 2) { updateText("> You head East"); posx++;}
+			if (x === 3) { updateText("> You head South"); posy++;}
+			if (x === 4) { updateText("> You head West"); posx--;}
+			if (posx < 0 || posx == mapSize || posy < 0 || posy == mapSize) { //checks if player walked off the map
+				alive = 0;
+				updateText("You walk off the island and fall to your death. You went splat.");
+				return;
+				}
+			
+			updateText(storyMap[posy][posx]);
+			
+			//checks if the players are on the death corners
+			if ((posx == 0 && posy == (mapSize - 1)) || (posx == 0 && posy == 0) || (posx == (mapSize - 1) && posy == (mapSize - 1)) || (posx == (mapSize - 1) && posy == 0) ){
+				alive = 0;
+				}
+			
+			
+			if (positionMap[posy][posx] == 0) { //gives player some points for entering a new area
+				positionMap[posy][posx] = 1;
+				updateScore(5);
+				}
 		}
 		
 		</script>

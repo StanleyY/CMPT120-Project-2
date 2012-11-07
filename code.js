@@ -30,11 +30,6 @@ function getInput(input){
 function move(x){
 	if(position[x] === "null") { updateDisplay("You cannot go that way"); return;}
 	var current = position[x];
-	//console.log(current.name);
-	console.log(current.north + " North");
-	console.log(current.east + " East");
-	console.log(current.south + " South");
-	console.log(current.west + " West");
 	position[0] = current.north;
 	position[1] = current.east;
 	position[2] = current.south;
@@ -92,6 +87,7 @@ function generateAreas(){
 	drugArea = new area("drug store", "null", "You are inside a drug store", road5, "null", "null", "null");
 	
 	//I have to do this because javaScript doesn't actually use pointers and I have not found a solution yet that wouldn't require even more hard coding
+	//maybe an update method, eh I'll do it next version
 	road1.east = sportArea;
 	road1.west = foodArea;
 	road1.south = road2;

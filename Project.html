@@ -2,7 +2,7 @@
 <html>
 	<!-- Stanley Yang    10/24/2012
 		 Introduction to Programming
-		 Project 3 - game v0.4 -->
+		 Project 4 - game v0.6 -->
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		<meta name="author"             content="Stanley Yang" />
@@ -12,14 +12,13 @@
 		</style>
 	</head>
 	
-	<body onLoad="generateMap(3); fillStory();">
+	<body onLoad="init()">
 		<h1 class="game_title">
 			Death Island
 		</h1>
 		
-		<!-- damn firefox caching inputs, autocomplete will error in the validator but it is the only way to stop firefox from drawing from its cache-->
-		
-		<textarea rows= "10" cols="80" id="display" autocomplete="off" readonly >You are on a floating island, hundreds of thousands of feet in the air, surrounded by various things.
+		<!-- autocomplete will error in the validator but it is the only way to stop firefox from drawing from its cache-->
+		<textarea rows= "10" cols="80" id="display" autocomplete="off" readonly >You are inside a mall. The entrace is barricaded to keep out the zombies. Gather supplies before you attempt to go outside
 		</textarea>
 		
 		<form>
@@ -33,6 +32,35 @@
 				   onclick="getInput(input.value)">
 		</form> 
 		
+		<input type="button"
+			   value="North"
+			   id = "North"
+			   onclick="getInput('North');"
+			   autocomplete = "off">
+			   
+		<br>   
+		
+		<input type="button"
+			   value="West"
+			   id="West"
+			   onclick= "getInput('West');"
+			   autocomplete = "off">
+			   
+		<input type="button"
+			   value="East"
+			   id="East"
+			   onclick="getInput('East');"
+			   autocomplete = "off">
+
+		<br>
+			   
+		<input type="button"
+			   value="South"
+			   id="South"
+			   onclick="getInput('South');"
+			   autocomplete = "off">
+			   
+		
 		<p id = "displayScore">
 		Current Score : 0
 		</p>
@@ -43,121 +71,12 @@
 			<a href="http://validator.w3.org/#validate_by_input">HTML5</a>
 		</p>
 		
-		<input type="button"
-			   value="North"
-			   onclick="move(1);">
+		<br>
+		<br>
+		<!-- a temp picture of the map -->
+		<img src="map.png" >
 			   
-		<input type="button"
-			   value="East"
-			   onclick="move(2);">
-			   
-		<input type="button"
-			   value="South"
-			   onclick="move(3);">
-		
-		<input type="button"
-			   value="West"
-			   onclick= "move(4);" >
-			   
-		<script type = "text/javascript">
-		var positionMap;
-		var storyMap;
-		var score = 0;
-		var posx;
-		var posy;
-		var mapSize;
-		var alive = true;
-		
-		//generates the map and places you at the certain of it at the moment
-		function generateMap(size){
-			positionMap = new Array(size);
-			storyMap = new Array(size);
-			for(var i = 0;i < size; i++){
-					positionMap[i] = new Array(size);
-					storyMap[i] = new Array(size);
-					}
-			for(i=0; i < size;i++){
-				for(j=0; j <size;j++){
-					positionMap[i][j] = 0;
-					}
-				}
-			posx = Math.floor(size / 2);
-			posy = posx;
-			mapSize = size;
-			positionMap[posx][posy] = 1;
-		}
-		
-		//temporary hard code since I didn't want to make another matrix for details for looking around yet
-		function fillStory(){
-			storyMap[0][0] = "You fell into a trap. You fall into a pit of spikes and are instantly impaled.";
-			storyMap[0][1] = "You peer into the deep blue sky, \n you are facing North. \n To your left is a dirt road. To your right is a bonfire";
-			storyMap[0][2] = "You trip and fall into the bonfire. You are roasted alive" ;
-			storyMap[1][0] = "You peer over the edge and stare at a cloud. \n You are facing West. \n To your left is a road covered with leaves. To your right is a dirt road." ;
-			storyMap[1][1] = "You are back where you started, you are facing North again." ;
-			storyMap[1][2] = "You kick a pebble to see how high up you are. The stone fades out of sight. \n You are facing East. \n To your left is a bonfire. To your right is a group of natives." ;
-			storyMap[2][0] = "You step on a spring pad and you are launched off the island. You made an amusing splat sound." ;
-			storyMap[2][1] = "You notice a cloud that is shaped like a skull. Hopefully not a bad omen. \n You are facing South. \n To your left are a group of natives. To your right is a road covered in leaves." ;
-			storyMap[2][2] = "You greet the people. They turn out to be cannibals. They knock you over the head and serve you for dinner. You were delicately seasoned. " ;
-		}
-		
-		function updateDisplay(message){
-			display.value = message + "\n \n" + display.value;
-		}
-		
-		function updateScore(x){
-			score += x;
-			document.getElementById("displayScore").innerHTML = "Current Score: " + score;
-		}
-		
-		function getInput(input){
-			input = input.toUpperCase(); //Getting rid of case
-			if(input === "N" || input === "NORTH") { move(1);}
-			else if(input === "E" || input === "EAST") { move(2);}
-			else if(input === "S" || input === "SOUTH") { move(3);}
-			else if(input === "W" || input === "WEST") { move(4);}
-			else updateDisplay(input + " is Invalid Command, currently you may only enter cardinal directions such as North or N");
-		}
-		
-		function move(x){
-			if (alive != 1) { updateDisplay("You are dead, please refresh the page"); return;} //checks if player is still alive
-			//you had an issue with me using return here but I thought that is fairly standard practice 
-			//because that 'if' is only there to instantly end the call if that condition isn't met and the best way to ensure you are out of a function is to return.
-			
-			if (x === 1) { updateDisplay("> You head North"); posy--;}
-			if (x === 2) { updateDisplay("> You head East"); posx++;}
-			if (x === 3) { updateDisplay("> You head South"); posy++;}
-			if (x === 4) { updateDisplay("> You head West"); posx--;}
-			if (posx < 0 || posx == mapSize || posy < 0 || posy == mapSize) { //checks if player walked off the map
-				alive = 0;
-				updateDisplay("You walk off the island and fall to your death. You went splat.");
-				return;
-				}
-			
-			updateDisplay(storyMap[posy][posx]);
-			
-			//checks if the players are on the death corners
-			if ((posx == 0 && posy == (mapSize - 1)) || (posx == 0 && posy == 0) || (posx == (mapSize - 1) && posy == (mapSize - 1)) || (posx == (mapSize - 1) && posy == 0) ){
-				alive = 0;
-				}
-			
-			
-			if (positionMap[posy][posx] == 0) { //gives player some points for entering a new area
-				positionMap[posy][posx] = 1;
-				updateScore(5);
-				}
-		}
-		
-		//the following code is not written by me, it was taken from WebCheatSheets.com and it disable the enter key to prevent accidental form submission
-		
-		function stopRKey(evt) {
-			var evt = (evt) ? evt : ((event) ? event : null);
-			var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-			if ((evt.keyCode == 13) && (node.type=="text"))  {return false;}
-		}
-
-		document.onkeypress = stopRKey; 
-		
-		</script>
+	<script src="code.js"></script> 
 
 	</body>
 </html>

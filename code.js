@@ -1,4 +1,5 @@
 //these are my globals, they are all initialized in init
+//TEST
 //position interator
 var position = []; 
 //inventory

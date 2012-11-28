@@ -59,7 +59,8 @@ function showInventory(){
 
 function take(input){
 //this is just a test for my inventory, right now the user can take anything and put it in their inventory
-	inventory[inventory.length] = new item(input.substring(5), "blah");
+	//inventory[inventory.length] = new item(input.substring(5), "blah");
+	inventory[inventory.length] = new item("LOLOLOL", "LOLOLOL");
 	}
 	
 function area(_name, _item, _description, _north, _east, _south, _west){
@@ -72,7 +73,7 @@ function area(_name, _item, _description, _north, _east, _south, _west){
 	this.west = _west;
 	this.newLocation = true;
 	this.toString = function(){
-						updateDisplay(this.discription);
+						return(this.discription);
 						}
 	}
 	
@@ -80,7 +81,7 @@ function item(_name, _description){
 	this.name = _name;
 	this.description = _description;
 	this.toString = function(){
-						updateDisplay(this.name);
+						return(this.name);
 						}
 	}
 

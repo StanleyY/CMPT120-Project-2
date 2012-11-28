@@ -1,11 +1,12 @@
 //these are my globals, they are all initialized in init
-//TEST
+
 //position interator
 var position = []; 
 //inventory
 var inventory = [];
 //my current locations
 var road1, road2, road3, road4, road5, sportArea, foodArea, electricArea, cookArea, officeArea, gunArea, bankArea, mattressArea, clothingArea, drugArea;
+var score = 0; 
 
 function updateDisplay(message){
 	display.value = message + "\n \n" + display.value;
@@ -30,11 +31,13 @@ function getInput(input){
 		
 function move(x){
 	if(position[x] === "null") { updateDisplay("You cannot go that way"); return;}
+	if(position[x].newLocation === true) {updateScore(5); position[x].newLocation = false;} //checks to see if it is a new location
 	var current = position[x];
 	position[0] = current.north;
 	position[1] = current.east;
 	position[2] = current.south;
 	position[3] = current.west;
+	position[4] = current; //where the player currently is
 	updateDisplay(current.description);
 	buttonCheck();
 }
@@ -68,6 +71,17 @@ function area(_name, _item, _description, _north, _east, _south, _west){
 	this.south = _south;
 	this.west = _west;
 	this.newLocation = true;
+	this.toString = function(){
+						updateDisplay(this.discription);
+						}
+	}
+	
+function item(_name, _description){
+	this.name = _name;
+	this.description = _description;
+	this.toString = function(){
+						updateDisplay(this.name);
+						}
 	}
 
 function generateAreas(){
@@ -113,6 +127,7 @@ function init(){
 	position[1] = sportArea;
 	position[2] = road2;
 	position[3] = foodArea;
+	position[4] = road1;
 	buttonCheck();
 	}
 	

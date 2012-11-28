@@ -59,7 +59,7 @@ function showInventory(){
 
 function take(input){
 //this is just a test for my inventory, right now the user can take anything and put it in their inventory
-	inventory[inventory.length] = input.substring(5);
+	inventory[inventory.length] = new item(input.substring(5), "blah");
 	}
 	
 function area(_name, _item, _description, _north, _east, _south, _west){

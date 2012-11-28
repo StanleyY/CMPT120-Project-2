@@ -6,6 +6,9 @@ var position = [];
 var inventory = [];
 //my current locations
 var road1, road2, road3, road4, road5, sportArea, foodArea, electricArea, cookArea, officeArea, gunArea, bankArea, mattressArea, clothingArea, drugArea;
+//items in the game
+var gun, pizza, painkillers, extinguisher, bat;
+
 var score = 0; 
 
 function updateDisplay(message){
@@ -24,7 +27,7 @@ function getInput(input){
 	else if(input === "S" || input === "SOUTH") { updateDisplay("You head South"); move(2);}
 	else if(input === "W" || input === "WEST") { updateDisplay("You head West"); move(3);}
 	else if(input === "I" || input === "INVENTORY") { showInventory();}
-	else if(input.substring(0,4) === "TAKE") { take(input);}
+	else if(input.substring(0,4) === "TAKE") { take(input.substring(5));}
 	else if(input === "HELP") { updateDisplay("Currently you may enter cardinal directions such as North or N. You may also look into your Inventory by typing inventory or I"); }
 	else updateDisplay(input + " is Invalid Command. Enter \"help\" if you want to see available commands");
 }
@@ -58,9 +61,11 @@ function showInventory(){
 	}
 
 function take(input){
-//this is just a test for my inventory, right now the user can take anything and put it in their inventory
-	//inventory[inventory.length] = new item(input.substring(5), "blah");
-	inventory[inventory.length] = new item("LOLOLOL", "LOLOLOL");
+	input = input.toLowerCase();
+	if (position[4].item.toLowerCase() != input) {updateDisplay("There is no " + input + " here"); return;} //checks to see if the item exists in the current location
+	inventory[inventory.length] = window[input]; //wheeee global variables
+	updateDisplay("You put the " + input + " in your backpack");
+	position[4].item = "null";
 	}
 	
 function area(_name, _item, _description, _north, _east, _south, _west){
@@ -87,20 +92,20 @@ function item(_name, _description){
 
 function generateAreas(){
 	road1 = new area("road", "null", "You are on a path", "null", sportArea, road2, foodArea);
-	sportArea = new area("Sports store", "null", "You are inside a sports store", "null", "null", "null", road1);
-	foodArea = new area("Food store", "null", "You are inside a food store", "null", road1, "null", "null");
+	sportArea = new area("Sports store", "bat", "You are inside a sports store", "null", "null", "null", road1);
+	foodArea = new area("Food store", "pizza", "You are inside a food store", "null", road1, "null", "null");
 	road2 = new area("road", "null", "You are on a path", road1, cookArea, road3, electricArea);
 	cookArea = new area("cooking store", "null", "You are inside a cooking store", "null", "null", road4, road2);
 	electricArea = new area("electronics store", "null", "You are inside an electronics store", "null", road2, "null", "null");
 	road3 = new area("road", "null", "You are on a path", road2, road4, gunArea, officeArea);
-	officeArea = new area("office store", "null", "You are inside an office supplies store", "null", road3, "null", "null");
-	gunArea = new area("gun store", "null", "You are inside a gun store", road3, "null", "null", "null");
+	officeArea = new area("office store", "extinguisher", "You are inside an office supplies store", "null", road3, "null", "null");
+	gunArea = new area("gun store", "gun", "You are inside a gun store", road3, "null", "null", "null");
 	road4 = new area("road", "null", "You are on a path", cookArea, road5, bankArea, road3);
 	bankArea = new area("bank", "null", "You are inside a bank", road4, "null", "null", "null");
 	road5 = new area("road", "null", "You are on a path", mattressArea, clothingArea, drugArea, road4);
 	mattressArea = new area("mattress store", "null", "You are inside a mattress store", "null", "null", road5, "null");
 	clothingArea = new area("clothing store", "null", "You are inside a clothes store", "null", "null", "null", road5);
-	drugArea = new area("drug store", "null", "You are inside a drug store", road5, "null", "null", "null");
+	drugArea = new area("drug store", "painkillers", "You are inside a drug store", road5, "null", "null", "null");
 	
 	//I have to do this because javaScript doesn't actually use pointers and I have not found a solution yet that wouldn't require even more hard coding
 	//maybe an update method, eh I'll do it next version
@@ -121,9 +126,18 @@ function generateAreas(){
 	road5.south = drugArea;
 }		
 
+function generateItems(){
+	gun = new item("gun", "loaded and gives practical solutions to practical problems");
+	pizza = new item("pizza", "Delicious and Cheesy");
+	painkillers = new item("painkillers", "Pills that make everything better for a little while");
+	extinguisher = new item("extinguisher", "puts out those pesky fires");
+	bat = new item("bat", "Time to play ball");
+}
+
 
 function init(){
 	generateAreas();
+	generateItems();
 	position[0] = "null";
 	position[1] = sportArea;
 	position[2] = road2;

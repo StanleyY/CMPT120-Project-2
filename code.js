@@ -28,9 +28,24 @@ function getInput(input){
 	else if(input === "W" || input === "WEST") { updateDisplay("You head West"); move(3);}
 	else if(input === "I" || input === "INVENTORY") { showInventory();}
 	else if(input.substring(0,4) === "TAKE") { take(input.substring(5));}
-	else if(input === "HELP") { updateDisplay("Currently you may enter cardinal directions such as North or N. You may also look into your Inventory by typing inventory or I"); }
+	else if(input === "LOOK") { look();}
+	else if(input.substring(0,7) === "EXAMINE") { examine(input.substring(8));}
+	else if(input === "HELP") { updateDisplay("Currently you may enter cardinal directions such as North or N. You may also look into your Inventory by typing inventory or I. You may examine items in your backpack by typing examine and the item's name. You may look around the area as well by typing look."); }
 	else updateDisplay(input + " is Invalid Command. Enter \"help\" if you want to see available commands");
 }
+
+function look(){
+	updateDisplay(position[4].details());
+}
+	
+function examine(input){
+	input = input.toLowerCase();
+	for(var i = 0; i < inventory.length; i++){
+		if(inventory[i].name === input){updateDisplay(inventory[i].description); return;}
+		}
+	updateDisplay("That is not in your inventory");
+}
+	
 		
 function move(x){
 	if(position[x] === "null") { updateDisplay("You cannot go that way"); return;}
@@ -70,7 +85,7 @@ function take(input){
 	
 function area(_name, _item, _description, _north, _east, _south, _west){
 	this.name = _name;
-    this.item = _item; //<-- not actually used yet, I'll add actual items in the next version
+    this.item = _item;
 	this.description = _description;
 	this.north = _north;
 	this.east = _east;
@@ -79,6 +94,21 @@ function area(_name, _item, _description, _north, _east, _south, _west){
 	this.newLocation = true;
 	this.toString = function(){
 						return(this.discription);
+						}
+	this.details = function(){
+						var stuff = "";
+						stuff += this.description;
+						if (this.item != "null") { stuff+= ". You see a " + this.item;}
+						else {stuff += ". There is nothing important here";}
+						if (this.north != "null"){ stuff += ". To your North is a " + this.north.name;}
+						else {stuff += ". There is nothing to your North";}
+						if (this.east != "null"){ stuff += ". To your East is a " + this.east.name;}
+						else {stuff += ". There is nothing to your East";}
+						if (this.south != "null"){ stuff += ". To your South is a " + this.south.name;}
+						else {stuff += ". There is nothing to your South";}
+						if (this.west != "null"){ stuff += ". To your West is a " + this.west.name + ".";}
+						else {stuff += ". There is nothing to your West.";}
+						return stuff;
 						}
 	}
 	
@@ -108,7 +138,7 @@ function generateAreas(){
 	drugArea = new area("drug store", "painkillers", "You are inside a drug store", road5, "null", "null", "null");
 	
 	//I have to do this because javaScript doesn't actually use pointers and I have not found a solution yet that wouldn't require even more hard coding
-	//maybe an update method, eh I'll do it next version
+	//I know a better way to do this but I didn't feel like refactoring for something so trivial
 	road1.east = sportArea;
 	road1.west = foodArea;
 	road1.south = road2;
@@ -127,10 +157,10 @@ function generateAreas(){
 }		
 
 function generateItems(){
-	gun = new item("gun", "loaded and gives practical solutions to practical problems");
+	gun = new item("gun", "Loaded and gives practical solutions to practical problems");
 	pizza = new item("pizza", "Delicious and Cheesy");
 	painkillers = new item("painkillers", "Pills that make everything better for a little while");
-	extinguisher = new item("extinguisher", "puts out those pesky fires");
+	extinguisher = new item("extinguisher", "Puts out those pesky fires");
 	bat = new item("bat", "Time to play ball");
 }
 

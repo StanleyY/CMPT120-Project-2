@@ -1,15 +1,27 @@
 //these are my globals, they are all initialized in init
 
 //position interator
+//I didn't use a matrix because you wanted someone to use pointers, so I did. I haven't done the calculations but I think this is more efficient
 var position = []; 
 //inventory
 var inventory = [];
 //my current locations
-var road1, road2, road3, road4, road5, sportArea, foodArea, electricArea, cookArea, officeArea, gunArea, bankArea, mattressArea, clothingArea, drugArea;
+var road1, road2, road3, road4, road5, sportArea, foodArea, electricArea, cookArea, officeArea, gunArea, bankArea, mattressArea, clothingArea, drugArea, exitArea;
 //items in the game
 var gun, pizza, painkillers, extinguisher, bat;
 
-var score = 0; 
+var score = 0;
+var gameOver = false;
+
+//while I agree constants are important in coding, there really are no such things in javascript
+//which is why I chose to not do it at all
+//there is 'const' but it only works in chrome so it is bad practice to use it
+//but I will initialize these because it does make the code easier to read
+var NORTH = 0;
+var EAST = 1;
+var SOUTH = 2;
+var WEST = 3;
+var PLAYER = 4;
 
 function updateDisplay(message){
 	display.value = message + "\n \n" + display.value;
@@ -21,43 +33,64 @@ function updateScore(x){
 }
 	
 function getInput(input){
+	if (gameOver === true) {updateDisplay("GAME OVER \nPlease refresh to play again"); return;}
+	if (input === "") {updateDisplay("You did not enter a command."); return;}
 	input = input.toUpperCase(); //Getting rid of case
-	if(input === "N" || input === "NORTH") { updateDisplay("You head North"); move(0);}
-	else if(input === "E" || input === "EAST") { updateDisplay("You head East"); move(1);}
-	else if(input === "S" || input === "SOUTH") { updateDisplay("You head South"); move(2);}
-	else if(input === "W" || input === "WEST") { updateDisplay("You head West"); move(3);}
+	if(input === "N" || input === "NORTH") { updateDisplay("You head North"); move(NORTH);}
+	else if(input === "E" || input === "EAST") { updateDisplay("You head East"); move(EAST);}
+	else if(input === "S" || input === "SOUTH") { updateDisplay("You head South"); move(SOUTH);}
+	else if(input === "W" || input === "WEST") { updateDisplay("You head West"); move(WEST);}
 	else if(input === "I" || input === "INVENTORY") { showInventory();}
 	else if(input.substring(0,4) === "TAKE") { take(input.substring(5));}
 	else if(input === "LOOK") { look();}
 	else if(input.substring(0,7) === "EXAMINE") { examine(input.substring(8));}
 	else if(input === "HELP") { updateDisplay("Currently you may enter cardinal directions such as North or N. You may also look into your Inventory by typing inventory or I. You may examine items in your backpack by typing examine and the item's name. You may look around the area as well by typing look."); }
-	else updateDisplay(input + " is Invalid Command. Enter \"help\" if you want to see available commands");
+	else updateDisplay(input + " is Invalid Command. Enter \"help\" if you want to see available commands.");
 }
 
 function look(){
-	updateDisplay(position[4].details());
+	updateDisplay(position[PLAYER].details());
 }
 	
-function examine(input){
-	input = input.toLowerCase();
-	for(var i = 0; i < inventory.length; i++){
-		if(inventory[i].name === input){updateDisplay(inventory[i].description); return;}
-		}
-	updateDisplay("That is not in your inventory");
+function examine(item){
+	item = item.toLowerCase();
+	if(hasItem(item)) updateDisplay(item + ": " + window[item].description);
+	else updateDisplay("That is not in your inventory.");
 }
 	
 		
 function move(x){
-	if(position[x] === "null") { updateDisplay("You cannot go that way"); return;}
+	if(position[x] === "null") { updateDisplay("You cannot go that way."); return;}
+	if(position[x] === exitArea) {endGameCheck(); return;}
 	if(position[x].newLocation === true) {updateScore(5); position[x].newLocation = false;} //checks to see if it is a new location
 	var current = position[x];
-	position[0] = current.north;
-	position[1] = current.east;
-	position[2] = current.south;
-	position[3] = current.west;
-	position[4] = current; //where the player currently is
+	position[NORTH] = current.north;
+	position[EAST] = current.east;
+	position[SOUTH] = current.south;
+	position[WEST] = current.west;
+	position[PLAYER] = current;
 	updateDisplay(current.description);
 	buttonCheck();
+}
+	
+function endGameCheck(){
+	if(checkItems()){
+		updateDisplay("You walk out into the field and immediately kill two zombies with your gun. A zombie sneaks up behind you and pounds on you. You beat its face in with your bat. You refresh yourself with painkillers and begin looking for others. \nGAME OVER");
+		gameOver = true;
+	}
+	else updateDisplay("You do not have all you need yet");
+}
+	
+function checkItems(){
+	if(hasItem("gun") && hasItem("bat") && hasItem("painkillers")) return true;
+	return false;
+}
+
+function hasItem(item){
+	for(var i = 0; i < inventory.length; i++){
+		if(inventory[i].name === item){return true;}
+	}
+	return false;
 }
 	
 function buttonCheck(){
@@ -65,23 +98,25 @@ function buttonCheck(){
 	document.getElementById("East").disabled = false;
 	document.getElementById("South").disabled = false;
 	document.getElementById("West").disabled = false;
-	if(position[0] === "null") { document.getElementById("North").disabled = true;}
-	if(position[1] === "null") { document.getElementById("East").disabled = true;}
-	if(position[2] === "null") { document.getElementById("South").disabled = true;}
-	if(position[3] === "null") { document.getElementById("West").disabled = true;}
-	}
+	if(position[NORTH] === "null") { document.getElementById("North").disabled = true;}
+	if(position[EAST] === "null") { document.getElementById("East").disabled = true;}
+	if(position[SOUTH] === "null") { document.getElementById("South").disabled = true;}
+	if(position[WEST] === "null") { document.getElementById("West").disabled = true;}
+}
 
 function showInventory(){
+	if(inventory.length === 0) { updateDisplay("Your inventory is currently empty"); return;}
 	updateDisplay("Your inventory currently contains: " + inventory);
-	}
+}
 
 function take(input){
 	input = input.toLowerCase();
-	if (position[4].item.toLowerCase() != input) {updateDisplay("There is no " + input + " here"); return;} //checks to see if the item exists in the current location
+	if (position[PLAYER].item.toLowerCase() != input) {updateDisplay("There is no " + input + " here."); return;} //checks to see if the item exists in the current location
 	inventory[inventory.length] = window[input]; //wheeee global variables
-	updateDisplay("You put the " + input + " in your backpack");
-	position[4].item = "null";
-	}
+	updateDisplay("You put the " + input + " in your backpack.");
+	position[PLAYER].item = "null";
+	updateScore(10);
+}
 	
 function area(_name, _item, _description, _north, _east, _south, _west){
 	this.name = _name;
@@ -94,23 +129,23 @@ function area(_name, _item, _description, _north, _east, _south, _west){
 	this.newLocation = true;
 	this.toString = function(){
 						return(this.discription);
-						}
+					}
 	this.details = function(){
 						var stuff = "";
 						stuff += this.description;
 						if (this.item != "null") { stuff+= ". You see a " + this.item;}
-						else {stuff += ". There is nothing important here";}
-						if (this.north != "null"){ stuff += ". To your North is a " + this.north.name;}
+						else {stuff += ". There is nothing of interest here";}
+						if (this.north != "null"){ stuff += ". To your North is " + this.north.name;}
 						else {stuff += ". There is nothing to your North";}
-						if (this.east != "null"){ stuff += ". To your East is a " + this.east.name;}
+						if (this.east != "null"){ stuff += ". To your East is " + this.east.name;}
 						else {stuff += ". There is nothing to your East";}
-						if (this.south != "null"){ stuff += ". To your South is a " + this.south.name;}
+						if (this.south != "null"){ stuff += ". To your South is " + this.south.name;}
 						else {stuff += ". There is nothing to your South";}
-						if (this.west != "null"){ stuff += ". To your West is a " + this.west.name + ".";}
+						if (this.west != "null"){ stuff += ". To your West is " + this.west.name + ".";}
 						else {stuff += ". There is nothing to your West.";}
 						return stuff;
-						}
-	}
+					}
+}
 	
 function item(_name, _description){
 	this.name = _name;
@@ -118,27 +153,28 @@ function item(_name, _description){
 	this.toString = function(){
 						return(this.name);
 						}
-	}
+}
 
 function generateAreas(){
-	road1 = new area("road", "null", "You are on a path", "null", sportArea, road2, foodArea);
-	sportArea = new area("Sports store", "bat", "You are inside a sports store", "null", "null", "null", road1);
-	foodArea = new area("Food store", "pizza", "You are inside a food store", "null", road1, "null", "null");
-	road2 = new area("road", "null", "You are on a path", road1, cookArea, road3, electricArea);
-	cookArea = new area("cooking store", "null", "You are inside a cooking store", "null", "null", road4, road2);
-	electricArea = new area("electronics store", "null", "You are inside an electronics store", "null", road2, "null", "null");
-	road3 = new area("road", "null", "You are on a path", road2, road4, gunArea, officeArea);
-	officeArea = new area("office store", "extinguisher", "You are inside an office supplies store", "null", road3, "null", "null");
-	gunArea = new area("gun store", "gun", "You are inside a gun store", road3, "null", "null", "null");
-	road4 = new area("road", "null", "You are on a path", cookArea, road5, bankArea, road3);
-	bankArea = new area("bank", "null", "You are inside a bank", road4, "null", "null", "null");
+	road1 = new area("a road", "null", "You are on a path", exitArea, sportArea, road2, foodArea);
+	sportArea = new area("the Sports store", "bat", "You are inside the Sports store", "null", "null", "null", road1);
+	foodArea = new area("the Food store", "pizza", "You are inside the Food store", "null", road1, "null", "null");
+	road2 = new area("a road", "null", "You are on a path", road1, cookArea, road3, electricArea);
+	cookArea = new area("the Cooking store", "null", "You are inside the Cooking store", "null", "null", road4, road2);
+	electricArea = new area("the Electronics store", "null", "You are inside the Electronics store", "null", road2, "null", "null");
+	road3 = new area("a road", "null", "You are on a path", road2, road4, gunArea, officeArea);
+	officeArea = new area("the Office store", "extinguisher", "You are inside the Office supplies store", "null", road3, "null", "null");
+	gunArea = new area("the Gun store", "gun", "You are inside the Gun store", road3, "null", "null", "null");
+	road4 = new area("a road", "null", "You are on a path", cookArea, road5, bankArea, road3);
+	bankArea = new area("the Bank", "null", "You are inside the Bank", road4, "null", "null", "null");
 	road5 = new area("road", "null", "You are on a path", mattressArea, clothingArea, drugArea, road4);
-	mattressArea = new area("mattress store", "null", "You are inside a mattress store", "null", "null", road5, "null");
-	clothingArea = new area("clothing store", "null", "You are inside a clothes store", "null", "null", "null", road5);
-	drugArea = new area("drug store", "painkillers", "You are inside a drug store", road5, "null", "null", "null");
-	
+	mattressArea = new area("the Mattress store", "null", "You are inside the Mattress store", "null", "null", road5, "null");
+	clothingArea = new area("the Clothing store", "null", "You are inside the Clothes store", "null", "null", "null", road5);
+	drugArea = new area("the Drug store", "painkillers", "You are inside the Drug store", road5, "null", "null", "null");
+	exitArea = new area("the Exit", "null", "null", "null", "null", road1, "null");
 	//I have to do this because javaScript doesn't actually use pointers and I have not found a solution yet that wouldn't require even more hard coding
 	//I know a better way to do this but I didn't feel like refactoring for something so trivial
+	road1.north = exitArea;
 	road1.east = sportArea;
 	road1.west = foodArea;
 	road1.south = road2;
@@ -168,13 +204,13 @@ function generateItems(){
 function init(){
 	generateAreas();
 	generateItems();
-	position[0] = "null";
-	position[1] = sportArea;
-	position[2] = road2;
-	position[3] = foodArea;
-	position[4] = road1;
+	position[NORTH] = exitArea;
+	position[EAST] = sportArea;
+	position[SOUTH] = road2;
+	position[WEST] = foodArea;
+	position[PLAYER] = road1;
 	buttonCheck();
-	}
+}
 	
 //the following code is not written by me, it was taken from WebCheatSheets.com and it disable the enter key to prevent accidental form submission
 	

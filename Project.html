@@ -18,7 +18,8 @@
 		</h1>
 		
 		<!-- autocomplete will error in the validator but it is the only way to stop firefox from drawing from its cache-->
-		<textarea rows= "10" cols="80" id="display" autocomplete="off" readonly >You are inside a mall. The entrace is barricaded to keep out the zombies. Gather supplies before you attempt to go outside
+		<textarea rows= "10" cols="80" id="display" autocomplete="off" readonly >You are inside a mall. The entrace is barricaded to keep out the zombies.
+Gather supplies before you attempt to go outside.
 		</textarea>
 		
 		<form>
@@ -36,7 +37,9 @@
 			   value="North"
 			   id = "North"
 			   onclick="getInput('North');"
-			   autocomplete = "off">
+			   autocomplete = "off"
+			   style="position: relative; left: 38px;"
+			   >
 			   
 		<br>   
 		
@@ -44,13 +47,17 @@
 			   value="West"
 			   id="West"
 			   onclick= "getInput('West');"
-			   autocomplete = "off">
+			   autocomplete = "off"
+			   style="position: relative; left: 10px;"
+			   >
 			   
 		<input type="button"
 			   value="East"
 			   id="East"
 			   onclick="getInput('East');"
-			   autocomplete = "off">
+			   autocomplete = "off"
+			   style="position: relative; left: 10px;"
+			   >
 
 		<br>
 			   
@@ -58,7 +65,27 @@
 			   value="South"
 			   id="South"
 			   onclick="getInput('South');"
-			   autocomplete = "off">
+			   autocomplete = "off"
+			   style="position: relative; left: 38px;"
+			   >
+		
+		<br>
+		
+		<input type="button"
+			   value="Look"
+			   id="Look"
+			   onclick="getInput('look');"
+			   autocomplete = "off"
+			   style="position: relative; left: 10px;"
+			   >
+		
+		<input type="button"
+			   value="Inventory"
+			   id="Inventory"
+			   onclick="getInput('inventory');"
+			   autocomplete = "off"
+			   style="position: relative; left: 10px;"
+			   >
 			   
 		
 		<p id = "displayScore">

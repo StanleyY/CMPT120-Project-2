@@ -2,6 +2,7 @@
 
 //position interator
 //I didn't use a matrix because you wanted someone to use pointers, so I did. I haven't done the calculations but I think this is more efficient
+//in hindsight I should have made this a prototype for clarity but whatever, it gets the job done
 var position = []; 
 //inventory
 var inventory = [];
@@ -58,7 +59,10 @@ function examine(item){
 	else updateDisplay("That is not in your inventory.");
 }
 	
-		
+//I didn't get your request for me to refactor until after the final.
+//if I were to redo this, I'd probably turn it into a player prototype with a move function or something and the
+//four positions and current location would just be variables in the prototype rather than in an array like here.
+//but whatever this gets the job done
 function move(x){
 	if(position[x] === "null") { updateDisplay("You cannot go that way."); return;}
 	if(position[x] === exitArea) {endGameCheck(); return;}
